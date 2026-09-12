@@ -1,0 +1,2 @@
+"""Componentes reutilizaveis pelas entidades."""
+

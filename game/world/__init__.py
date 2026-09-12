@@ -1,0 +1,2 @@
+"""Cenarios e fases."""
+

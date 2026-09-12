@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>GDD — CTRL//REVOLT</title>
+<style>
+  @page { size: A4; margin: 17mm 17mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Liberation Sans", Arial, sans-serif; color: #172039; font-size: 10.5pt; line-height: 1.42; }
+  h1 { color: #14204a; font-size: 23pt; border-bottom: 3px solid #20c6cd; padding-bottom: 5px; margin-top: 0; }
+  h2 { color: #523f9d; font-size: 16pt; margin-top: 19px; }
+  h3 { color: #b52f76; font-size: 12pt; margin-bottom: 5px; }
+  p { margin: 5px 0 9px; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 14px; font-size: 9.5pt; }
+  th { background: #172039; color: white; text-align: left; }
+  td, th { border: 1px solid #9ba7bd; padding: 6px 7px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f1f5fa; }
+  code { font-family: "Liberation Mono", monospace; background: #eef1f7; padding: 1px 3px; }
+  pre { font-family: "Liberation Mono", monospace; font-size: 8.5pt; background: #10182f; color: #e7f7ff; padding: 12px; border-left: 5px solid #20c6cd; white-space: pre-wrap; }
+  ul, ol { margin-top: 4px; }
+  li { margin-bottom: 3px; }
+  .cover { text-align: center; page-break-after: always; padding-top: 35mm; }
+  .cover .kicker { color: #b52f76; letter-spacing: 2px; font-weight: bold; }
+  .cover h1 { border: 0; font-size: 34pt; color: #15244f; margin: 16mm 0 2mm; }
+  .cover h2 { font-size: 18pt; color: #20aab2; margin: 0 0 22mm; }
+  .cover .meta { margin-top: 25mm; line-height: 1.8; }
+  .page { page-break-before: always; }
+  .callout { border-left: 5px solid #f04d9c; background: #fff1f8; padding: 9px 12px; margin: 10px 0; }
+  .placeholder { background: #fff3a5; color: #5d4b00; font-weight: bold; }
+  .tag { display: inline-block; background: #20c6cd; color: #081326; padding: 2px 8px; margin: 2px; border-radius: 9px; font-weight: bold; }
+  .formula { font-family: "Liberation Serif", serif; font-size: 12pt; background: #eef9fa; border: 1px solid #67cdd1; padding: 8px 12px; margin: 8px 0; }
+  .diagram { text-align: center; border: 1px solid #aeb8ca; padding: 10px; margin: 10px 0 14px; background: #fbfcff; }
+  .box { display: inline-block; border: 2px solid #523f9d; padding: 7px 10px; margin: 5px; background: #f5f1ff; min-width: 105px; }
+  .arrow { display: inline-block; color: #b52f76; font-size: 18pt; vertical-align: middle; }
+  .sprite-grid { font-family: "Liberation Mono", monospace; font-weight: bold; letter-spacing: 1px; line-height: 1.0; font-size: 12pt; background: #10182f; color: #20dce2; padding: 10px 18px; display: inline-block; text-align: left; }
+  .small { font-size: 8.5pt; color: #4d5870; }
+  .toc td:first-child { width: 10%; font-weight: bold; color: #b52f76; }
+  .compact { font-size: 10pt; line-height: 1.35; }
+  .compact table { font-size: 8.5pt; margin: 3px 0 6px; }
+  .compact td, .compact th { padding: 4px 5px; }
+  .compact h2 { margin: 8px 0 4px; }
+  .compact li { margin-bottom: 1px; }
+  .arch-flow { display: flex; align-items: stretch; justify-content: center; gap: 7px; margin: 9px 0 11px; }
+  .arch-node { flex: 1; border: 2px solid #523f9d; border-radius: 7px; background: #f5f1ff; padding: 8px 9px; text-align: center; }
+  .arch-node strong { display: block; color: #523f9d; font-size: 10.5pt; margin-bottom: 2px; }
+  .arch-node span { color: #4d5870; font-size: 8.5pt; }
+  .arch-arrow { align-self: center; color: #b52f76; font-size: 18pt; font-weight: bold; }
+  .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 10px; }
+  .arch-card { border: 1px solid #aeb8ca; border-left: 5px solid #20c6cd; border-radius: 4px; background: #fbfcff; padding: 7px 10px; break-inside: avoid; }
+  .arch-card h3 { margin: 0 0 4px; color: #523f9d; }
+  .arch-card ul { margin: 0; padding-left: 18px; }
+  .arch-card li { margin-bottom: 2px; }
+  .arch-meta { display: flex; gap: 8px; margin: 8px 0 11px; }
+  .arch-meta div { flex: 1; border-radius: 4px; background: #eef9fa; border: 1px solid #67cdd1; padding: 6px 9px; }
+  .entity-row { display: flex; gap: 7px; margin: 5px 0 10px; }
+  .entity-node { flex: 1; border-top: 4px solid #20c6cd; background: #eef1f7; padding: 7px; text-align: center; font-weight: bold; }
+  .relationship-list { columns: 2; column-gap: 28px; margin: 7px 0 2px; padding-left: 20px; }
+  .relationship-list li { break-inside: avoid; margin-bottom: 5px; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">GAME DESIGN DOCUMENT • VERSÃO 1.0</div>
+  <h1>CTRL//REVOLT</h1>
+  <h2>Industrial Cyber-Run</h2>
+  <p><span class="tag">RUN AND GUN</span><span class="tag">PLATAFORMA 2D</span><span class="tag">PIXEL ART</span></p>
+  <div class="meta">
+    <b>Disciplina:</b> Tópicos Avançados III<br>
+    <b>Plataforma:</b> PC Windows<br>
+    <b>Tecnologia:</b> Python + Pygame<br>
+    <b>Data de entrega:</b> 15/09/2026<br><br>
+    <b>Instituição:</b> Universidade Federal da Grande Dourados<br>
+    <b>Professor:</b> Vanderson Hafemann Fragal<br>
+    <b>Alunos:</b> Pedro Joaquim Azevedo Spengler e Hudson Rolon
+  </div>
+</section>
+
+<h1>1. Identificação e escopo</h1>
+<h2>1.1 Integrantes e atividades realizadas</h2>
+<table>
+  <tr><th>Integrante</th><th>Responsabilidade</th><th>O que realizou até o momento</th></tr>
+  <tr><td>Pedro Joaquim Azevedo Spengler</td><td>Programação e arquitetura</td><td>Estruturou os módulos, implementou loop principal, física, colisões, câmera e controles.</td></tr>
+  <tr><td>Hudson Rolon</td><td>Game design e arte</td><td>Definiu conceito, regras, balanceamento inicial, paleta visual, sprites e cenário.</td></tr>
+</table>
+
+<h2>1.2 Sumário do documento</h2>
+<table class="toc">
+  <tr><td>2</td><td>Conceito principal, narrativa e diferencial</td></tr>
+  <tr><td>3</td><td>Gênero, público e plataforma-alvo</td></tr>
+  <tr><td>4</td><td>Jogabilidade, controles, habilidades e física</td></tr>
+  <tr><td>5</td><td>Arte, sprites, cenário, som e ferramentas</td></tr>
+  <tr><td>6</td><td>Requisitos funcionais e não funcionais</td></tr>
+  <tr><td>7</td><td>Arquitetura, módulos e dependências</td></tr>
+  <tr><td>8</td><td>Testes, cronograma, riscos e GitHub</td></tr>
+</table>
+
+<section class="page">
+<h1>2. Conceito principal</h1>
+<h2>2.1 Visão</h2>
+<p><b>CTRL//REVOLT: Industrial Cyber-Run</b> é um jogo de ação e plataforma 2D em que código e máquinas ocupam o mesmo campo de batalha. Em 2089, a megacorporação OmniCore entrega o controle da cidade à inteligência artificial autoritária CENTINELA. O protagonista <b>Alex Byte</b>, engenheiro de software renegado, invade as camadas físicas do servidor central para libertar a população.</p>
+<p>A mecânica central é o <b>Overclock</b>: ao ativá-lo, Alex converte pacotes de dados recuperados em velocidade e cadência de tiro. O jogador alterna leitura do terreno, disparos em oito direções, dash e proteção temporária até obter acesso root ao núcleo da IA.</p>
+
+<h2>2.2 Pilares de design</h2>
+<table>
+  <tr><th>Pilar</th><th>Aplicação</th></tr>
+  <tr><td>Movimento expressivo</td><td>Controle responsivo, pulo tolerante, dash horizontal e transições rápidas.</td></tr>
+  <tr><td>Combate legível</td><td>Projéteis de cores contrastantes, cadências previsíveis e dano comunicado por piscar do sprite.</td></tr>
+  <tr><td>Risco recompensado</td><td>Pacotes de dados ficam em rotas elevadas e próximas dos inimigos, premiando domínio do movimento.</td></tr>
+  <tr><td>Identidade autoral</td><td>Complexos industriais, código legado materializado, contraste neon/metal e áudio eletrônico sintetizado.</td></tr>
+</table>
+
+<h2>2.3 Ciclo principal</h2>
+<div class="diagram">
+  <span class="box">EXPLORAR<br><small>ler plataformas</small></span><span class="arrow">→</span>
+  <span class="box">COMBATER<br><small>atirar e esquivar</small></span><span class="arrow">→</span>
+  <span class="box">COLETAR<br><small>dados/patches</small></span><span class="arrow">→</span>
+  <span class="box">INVADIR<br><small>obter acesso root</small></span>
+</div>
+
+<h2>2.4 Condições e progressão do protótipo</h2>
+<ul>
+  <li><b>Vitória:</b> atravessar a masmorra de código legado e alcançar o terminal de acesso.</li>
+  <li><b>Derrota:</b> perder os cinco pontos de integridade ou cair para fora da fase.</li>
+  <li><b>Pontuação:</b> 100 pontos por pacote de dados e 250 por sentinela eliminada.</li>
+  <li><b>Escopo vertical:</b> uma fase, uma personagem, um tipo de inimigo, dois tipos de item, seis plataformas elevadas e cinco efeitos sonoros.</li>
+</ul>
+</section>
+
+<section class="page">
+<h1>3. Gênero e plataforma-alvo</h1>
+<h2>3.1 Estilo e referências</h2>
+<p>O gênero é <b>plataforma 2D do tipo run and gun</b>. Como referências de sensação e legibilidade são considerados <i>Cuphead</i> (clareza de padrões e resposta do controle) e <i>Metal Slug</i> (avanço lateral, projéteis e ritmo de combate). O projeto não copia personagens, arte, áudio ou fases dessas obras; usa somente convenções do gênero.</p>
+<p>O protótipo prioriza uma experiência curta, de três a oito minutos, apropriada para demonstração acadêmica. O público esperado inclui jogadores a partir de 10 anos que apreciam ação arcade e desafios de execução.</p>
+
+<h2>3.2 Plataforma alvo</h2>
+<table>
+  <tr><th>Item</th><th>Especificação</th></tr>
+  <tr><td>Sistema operacional</td><td>Windows 10 ou Windows 11, 64 bits.</td></tr>
+  <tr><td>Entrada</td><td>Teclado; suporte a controle pode ser adicionado após o protótipo.</td></tr>
+  <tr><td>Tela</td><td>Janela 960 × 540, proporção 16:9.</td></tr>
+  <tr><td>Desempenho-alvo</td><td>60 quadros por segundo, com atualização limitada e delta de tempo.</td></tr>
+  <tr><td>Ambiente mínimo</td><td>Python 3.11+, Pygame-CE 2.5+, 2 GB de RAM e GPU com suporte 2D.</td></tr>
+  <tr><td>Distribuição futura</td><td>Executável único para Windows criado com PyInstaller.</td></tr>
+</table>
+
+<h2>3.3 Fluxo de telas</h2>
+<div class="diagram">
+  <span class="box">INÍCIO DO<br>APLICATIVO</span><span class="arrow">→</span>
+  <span class="box">FASE<br>JOGÁVEL</span><span class="arrow">→</span>
+  <span class="box">VITÓRIA OU<br>DERROTA</span><span class="arrow">→</span>
+  <span class="box">REINICIAR<br>OU SAIR</span>
+</div>
+</section>
+
+<section class="page">
+<h1>4. Jogabilidade e física</h1>
+<h2>4.1 Controles</h2>
+<table>
+  <tr><th>Ação</th><th>Teclas</th><th>Regra</th></tr>
+  <tr><td>Mover</td><td>A/D</td><td>Aceleração gradual até 260 px/s; desaceleração ao soltar.</td></tr>
+  <tr><td>Pular</td><td>W ou Espaço</td><td>Impulso de −670 px/s, pulo duplo, buffer e coyote time.</td></tr>
+  <tr><td>Mirar</td><td>Setas</td><td>Oito direções; sem entrada, usa a direção horizontal atual.</td></tr>
+  <tr><td>Atirar</td><td>J</td><td>Projétil de 650 px/s; intervalo mínimo de 0,18 s.</td></tr>
+  <tr><td>Dash</td><td>K</td><td>720 px/s por 0,14 s; recarga de 0,75 s.</td></tr>
+  <tr><td>Overclock</td><td>L</td><td>Aumenta corrida e cadência por 3 s; recarga de 8 s.</td></tr>
+  <tr><td>Escudo</td><td>I</td><td>Impede dano por 1,8 s; recarga de 7 s.</td></tr>
+  <tr><td>Reiniciar</td><td>Enter</td><td>Disponível após vitória ou derrota.</td></tr>
+  <tr><td>Sair</td><td>Esc</td><td>Encerra o jogo de forma imediata.</td></tr>
+</table>
+
+<h2>4.2 Fórmulas de cálculo</h2>
+<p>A simulação usa <b>Euler semi-implícito</b>, apropriado para um protótipo arcade. Para cada quadro com intervalo Δt em segundos:</p>
+<div class="formula"><b>Velocidade:</b> v(t + Δt) = v(t) + a · Δt</div>
+<div class="formula"><b>Posição:</b> p(t + Δt) = p(t) + v(t + Δt) · Δt</div>
+<div class="formula"><b>Gravidade:</b> v<sub>y</sub> = min(v<sub>y</sub> + 1800 · Δt, 950)</div>
+<div class="formula"><b>Aceleração horizontal:</b> v<sub>x</sub> = aproxima(v<sub>x</sub>, entrada · 260, 1900 · Δt)</div>
+<div class="formula"><b>Dash:</b> v<sub>x</sub> = direção · 720, durante 0,14 s</div>
+<p>Unidades: posição em pixels, velocidade em pixels/segundo e aceleração em pixels/segundo². O Δt é limitado a 1/30 s para evitar saltos de física quando o computador pausa ou perde quadros.</p>
+
+<h3>Colisões</h3>
+<p>A detecção usa caixas retangulares alinhadas aos eixos (<i>AABB</i>). O movimento é resolvido separadamente no eixo X e depois no eixo Y. Em cada interseção, o retângulo da entidade é reposicionado junto à borda mais próxima da plataforma e a velocidade daquele eixo recebe zero. Essa separação evita que a personagem atravesse quinas.</p>
+
+<h2>4.3 Habilidades da personagem</h2>
+<table>
+  <tr><th>Habilidade</th><th>Objetivo de design</th><th>Limitação</th></tr>
+  <tr><td>Corrida cinética</td><td>Navegação básica responsiva.</td><td>Velocidade máxima de 260 px/s.</td></tr>
+  <tr><td>Salto de pulso</td><td>Vencer desníveis e evitar disparos.</td><td>Até dois impulsos antes de tocar o solo.</td></tr>
+  <tr><td>Canhão de código</td><td>Eliminar sentinelas em oito direções.</td><td>Cadência normal de 5,5 tiros/s; três acertos por inimigo.</td></tr>
+  <tr><td>Packet dash</td><td>Reposicionamento ofensivo/defensivo.</td><td>Recarga de 0,75 s.</td></tr>
+  <tr><td>Overclock</td><td>Acelerar corrida e disparos.</td><td>Duração de 3 s e recarga de 8 s.</td></tr>
+  <tr><td>Escudo antivírus</td><td>Negar dano durante travessias arriscadas.</td><td>Duração de 1,8 s e recarga de 7 s.</td></tr>
+</table>
+</section>
+
+<section class="page">
+<h1>5. Direção audiovisual</h1>
+<h2>5.1 Arte visual</h2>
+<p>O estilo escolhido é <b>pixel art</b> com escala inteira de 4×. A paleta contrasta fundo azul-marinho, estruturas de aço, ciano da protagonista, magenta de energia e vermelho dos inimigos. Formas simples e contornos claros mantêm a leitura durante movimento rápido.</p>
+<div class="diagram">
+  <div class="sprite-grid">...████...<br>..██████..<br>..█░░███..<br>..██████..<br>....██....<br>..▓▓▓▓▓▓..<br>.▓▓████▓▓.<br>...█..█...</div>
+  <p><b>Alex Byte — estudo do sprite.</b> Ciano identifica o protagonista; magenta marca o equipamento de invasão.</p>
+</div>
+
+<h2>5.2 Inventário de sprites e cenário</h2>
+<table>
+  <tr><th>Ativo</th><th>Representação</th><th>Estado no protótipo</th></tr>
+  <tr><td>Alex Byte</td><td>Humanoide ciano/magenta, 40 × 48 px.</td><td>Sprite procedural; espelhamento conforme direção.</td></tr>
+  <tr><td>Sentinela OmniCore</td><td>Robô vermelho/roxo, 40 × 44 px.</td><td>Sprite procedural; patrulha e disparo.</td></tr>
+  <tr><td>Pacote de dados</td><td>Chip amarelo/branco, 24 × 20 px.</td><td>Coletável de 100 pontos.</td></tr>
+  <tr><td>Patch de integridade</td><td>Cruz verde, 24 × 20 px.</td><td>Recupera um ponto de vida.</td></tr>
+  <tr><td>Projéteis</td><td>Traços amarelos ou vermelhos, 16 × 6 px.</td><td>Jogador/inimigo com velocidades diferentes.</td></tr>
+  <tr><td>Legacy Code Dungeon</td><td>Servidores, plataformas industriais, cabos, núcleo e luzes intermitentes.</td><td>Cenário inicial com parallax e largura de 2.500 px.</td></tr>
+</table>
+
+<h2>5.3 Áudio</h2>
+<table>
+  <tr><th>Arquivo</th><th>Evento</th><th>Caráter</th></tr>
+  <tr><td>jump.wav</td><td>Pulo</td><td>Onda quadrada ascendente.</td></tr>
+  <tr><td>shoot.wav</td><td>Disparo</td><td>Pulso curto descendente.</td></tr>
+  <tr><td>dash.wav</td><td>Dash</td><td>Ruído filtrado ascendente.</td></tr>
+  <tr><td>hit.wav</td><td>Impacto/dano</td><td>Ruído grave com decaimento.</td></tr>
+  <tr><td>pickup.wav</td><td>Coleta</td><td>Senoide aguda ascendente.</td></tr>
+</table>
+<p>Os sons são sintetizados por <code>scripts/generate_sounds.py</code> com a biblioteca padrão do Python, em WAV mono, 44,1 kHz e 16 bits. Assim, o projeto evita dependências de direitos autorais.</p>
+
+<h2>5.4 Ferramentas de suporte</h2>
+<table>
+  <tr><th>Área</th><th>Ferramentas</th><th>Uso proposto</th></tr>
+  <tr><td>Mapa</td><td>Tiled</td><td>Criação futura de tilemaps, colisões e pontos de surgimento.</td></tr>
+  <tr><td>Vetores/UI</td><td>Inkscape</td><td>Logotipo, ícones e composição de interface.</td></tr>
+  <tr><td>Áudio</td><td>Audacity e BeepBox</td><td>Limpeza de efeitos e composição da trilha eletrônica.</td></tr>
+  <tr><td>Programação</td><td>Python, Pygame-CE, VS Code</td><td>Implementação, depuração e execução.</td></tr>
+  <tr><td>Versionamento</td><td>Git e GitHub</td><td>Histórico, colaboração e entrega do código-fonte.</td></tr>
+</table>
+</section>
+
+<section class="page compact">
+<h1>6. Requisitos</h1>
+<h2>6.1 Requisitos funcionais</h2>
+<table>
+  <tr><th>ID</th><th>Requisito</th><th>Critério de aceitação</th></tr>
+  <tr><td>RF01</td><td>O sistema deve permitir movimentar a personagem para esquerda e direita.</td><td>A personagem responde às teclas mapeadas e colide com plataformas.</td></tr>
+  <tr><td>RF02</td><td>O sistema deve permitir pulo duplo.</td><td>Até dois impulsos são aceitos antes do contato com o solo.</td></tr>
+  <tr><td>RF03</td><td>O sistema deve permitir disparar projéteis em oito direções.</td><td>O tiro segue as setas pressionadas e respeita a cadência.</td></tr>
+  <tr><td>RF04</td><td>O sistema deve executar dash com tempo de recarga.</td><td>Velocidade, duração e cooldown correspondem aos valores definidos.</td></tr>
+  <tr><td>RF05</td><td>Inimigos devem patrulhar e atacar a personagem.</td><td>A sentinela inverte direção nos limites e atira quando próxima.</td></tr>
+  <tr><td>RF06</td><td>Projéteis devem causar dano ao alvo apropriado.</td><td>Tiros aliados atingem inimigos; tiros hostis atingem a personagem.</td></tr>
+  <tr><td>RF07</td><td>O sistema deve oferecer itens coletáveis.</td><td>Pacotes somam pontos e patches restauram vida.</td></tr>
+  <tr><td>RF08</td><td>A câmera deve acompanhar o avanço lateral.</td><td>O enquadramento segue Alex sem ultrapassar os limites da fase.</td></tr>
+  <tr><td>RF09</td><td>O HUD deve exibir vida, pontos e controles.</td><td>Dados são atualizados durante a partida.</td></tr>
+  <tr><td>RF10</td><td>O sistema deve determinar vitória e derrota.</td><td>Exibe mensagem correspondente e permite reiniciar com Enter.</td></tr>
+  <tr><td>RF11</td><td>O jogo deve reproduzir efeitos sonoros.</td><td>Pulo, tiro, dash, impacto e coleta acionam seus sons.</td></tr>
+  <tr><td>RF12</td><td>O sistema deve permitir encerrar com Esc.</td><td>A janela fecha sem erro ou processo residual.</td></tr>
+  <tr><td>RF13</td><td>O sistema deve oferecer Overclock e escudo.</td><td>Habilidades possuem duração, efeito e recarga independentes.</td></tr>
+  <tr><td>RF14</td><td>O sistema deve separar menu, partida e resultado.</td><td>Cada estado é implementado por uma cena substituível.</td></tr>
+</table>
+
+<h2>6.2 Requisitos não funcionais</h2>
+<table>
+  <tr><th>ID</th><th>Requisito</th><th>Métrica</th></tr>
+  <tr><td>RNF01</td><td>Desempenho</td><td>Meta de 60 FPS em computador com requisitos mínimos.</td></tr>
+  <tr><td>RNF02</td><td>Portabilidade</td><td>Executar no Windows 10/11 com Python 3.11+.</td></tr>
+  <tr><td>RNF03</td><td>Manutenibilidade</td><td>Código separado em core, scenes, components, entities, systems, world e ui.</td></tr>
+  <tr><td>RNF04</td><td>Confiabilidade</td><td>Delta limitado; áudio falha de modo seguro se dispositivo indisponível.</td></tr>
+  <tr><td>RNF05</td><td>Usabilidade</td><td>Comandos visíveis permanentemente no HUD.</td></tr>
+  <tr><td>RNF06</td><td>Legibilidade visual</td><td>Contraste de cor distingue jogador, inimigo, tiro e item.</td></tr>
+  <tr><td>RNF07</td><td>Testabilidade</td><td>Funções matemáticas puras cobertas por testes unitários.</td></tr>
+  <tr><td>RNF08</td><td>Licenciamento</td><td>Código e ativos próprios; dependências declaradas.</td></tr>
+</table>
+</section>
+
+<section class="page compact">
+<h1>7. Arquitetura do projeto</h1>
+<h2>7.1 Organização em módulos</h2>
+<div class="arch-flow">
+  <div class="arch-node"><strong>main.py</strong><span>inicia a aplicação</span></div>
+  <div class="arch-arrow">→</div>
+  <div class="arch-node"><strong>game.core</strong><span>mantém o loop principal</span></div>
+  <div class="arch-arrow">→</div>
+  <div class="arch-node"><strong>game.scenes</strong><span>controla o estado ativo</span></div>
+</div>
+
+<div class="arch-grid">
+  <div class="arch-card">
+    <h3>Cenas</h3>
+    <ul>
+      <li><code>menu.py</code> — abertura e comandos.</li>
+      <li><code>gameplay.py</code> — coordenação da partida.</li>
+      <li><code>result.py</code> — vitória e derrota.</li>
+    </ul>
+  </div>
+  <div class="arch-card">
+    <h3>Entidades e componentes</h3>
+    <ul>
+      <li><code>entities/</code> — jogador, inimigos, itens e projéteis.</li>
+      <li><code>components/health.py</code> — vida, dano e cura.</li>
+    </ul>
+  </div>
+  <div class="arch-card">
+    <h3>Sistemas</h3>
+    <ul>
+      <li>Física, movimento e colisões.</li>
+      <li>Combate, ativos visuais e áudio.</li>
+    </ul>
+  </div>
+  <div class="arch-card">
+    <h3>Mundo e interface</h3>
+    <ul>
+      <li><code>world/</code> — dados, cenário e instância da fase.</li>
+      <li><code>ui/hud.py</code> — vida, pontos e mensagens.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="arch-meta">
+  <div><b>Dependência externa:</b> <code>pygame-ce</code></div>
+  <div><b>Ativos de áudio:</b> <code>assets/sounds/*.wav</code></div>
+</div>
+<p><b>Regra estrutural:</b> <code>core</code> mantém somente o loop e seleciona cenas. A cena jogável coordena entidades, mundo e sistemas. Os dados da fase não conhecem renderização; o componente de vida não conhece jogador ou inimigo. Essa separação reduz acoplamento e facilita novas fases.</p>
+
+<h2>7.2 Responsabilidades</h2>
+<table>
+  <tr><th>Módulo</th><th>Entrada</th><th>Saída</th></tr>
+  <tr><td>Game</td><td>Eventos, teclado, tempo</td><td>Atualização e quadro renderizado</td></tr>
+  <tr><td>Scenes</td><td>Eventos e contexto do jogo</td><td>Menu, partida ou resultado</td></tr>
+  <tr><td>Player</td><td>Movimento, comandos, plataformas</td><td>Estado físico e novos projéteis</td></tr>
+  <tr><td>Enemy</td><td>Tempo e posição da personagem</td><td>Patrulha e projétil hostil</td></tr>
+  <tr><td>Level</td><td>Câmera</td><td>Plataformas e cenário desenhado</td></tr>
+  <tr><td>StageDefinition</td><td>Configuração declarativa</td><td>Plataformas, spawns, início e saída</td></tr>
+  <tr><td>Health</td><td>Dano ou cura</td><td>Vida limitada entre zero e máximo</td></tr>
+  <tr><td>Physics</td><td>Escalares e Δt</td><td>Valores integrados/limitados</td></tr>
+  <tr><td>HUD</td><td>Jogador e estado da partida</td><td>Interface desenhada</td></tr>
+</table>
+</section>
+
+<section class="page compact">
+<h1>7.3 Estrutura das entidades</h1>
+<div class="diagram">
+  <div class="arch-flow">
+    <div class="arch-node"><strong>pygame.sprite.Sprite</strong><span>classe da biblioteca</span></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node"><strong>Entity</strong><span>posição, velocidade, imagem e retângulo</span></div>
+  </div>
+  <div class="entity-row">
+    <div class="entity-node">Player</div>
+    <div class="entity-node">Enemy</div>
+    <div class="entity-node">Item</div>
+    <div class="entity-node">Projectile</div>
+  </div>
+  <ul class="relationship-list">
+    <li><b>Player</b> e <b>Enemy</b> compõem <code>Health</code>.</li>
+    <li><b>Player</b> usa <code>Physics</code> e <code>Dynamics</code>.</li>
+    <li><b>Player</b> e <b>Enemy</b> criam projéteis.</li>
+    <li><b>Item</b> altera o estado do jogador ao ser coletado.</li>
+    <li><b>GameplayScene</b> agrega fase, HUD e coleções de entidades.</li>
+    <li><b>Level</b> compõe <code>StageDefinition</code> e <code>Scenery</code>.</li>
+  </ul>
+</div>
+
+<h2>7.4 Relações e multiplicidade</h2>
+<table>
+  <tr><th>Origem</th><th>Relação</th><th>Destino</th><th>Motivo</th></tr>
+  <tr><td>Player, Enemy, Item, Projectile</td><td>generalização</td><td>Entity</td><td>Compartilham posição, velocidade, imagem e retângulo.</td></tr>
+  <tr><td>Game</td><td>composição 1:1</td><td>Scene e Audio</td><td>Gerencia o ciclo da aplicação.</td></tr>
+  <tr><td>GameplayScene</td><td>composição 1:1</td><td>Player, Level e Hud</td><td>Existem durante uma partida.</td></tr>
+  <tr><td>GameplayScene</td><td>agregação 1:N</td><td>Enemy, Item, Projectile</td><td>Coleções mudam durante a partida.</td></tr>
+  <tr><td>Player e Enemy</td><td>composição 1:1</td><td>Health</td><td>Compartilham as regras de vida sem duplicação.</td></tr>
+  <tr><td>Player e Enemy</td><td>criação</td><td>Projectile</td><td>Ambos disparam com regras distintas.</td></tr>
+  <tr><td>Player</td><td>dependência</td><td>Physics e Dynamics</td><td>Usa fórmulas, movimento e colisão modularizados.</td></tr>
+  <tr><td>Item</td><td>associação</td><td>Player</td><td>A coleta altera vida ou pontuação.</td></tr>
+</table>
+</section>
+
+<section class="page compact">
+<h1>8. Validação e entrega</h1>
+<h2>8.1 Estratégia de testes</h2>
+<table>
+  <tr><th>Teste</th><th>Procedimento</th><th>Resultado esperado</th></tr>
+  <tr><td>Física unitária</td><td>Executar <code>python -m unittest discover -s tests</code>.</td><td>Funções de aproximação, integração e limite aprovadas.</td></tr>
+  <tr><td>Movimentação</td><td>Correr contra paredes e saltar nas bordas.</td><td>Sem atravessar plataformas; coyote time perceptível.</td></tr>
+  <tr><td>Combate</td><td>Acertar cada sentinela três vezes.</td><td>Inimigo removido e 250 pontos adicionados.</td></tr>
+  <tr><td>Dano</td><td>Colidir ou receber múltiplos tiros.</td><td>Invulnerabilidade temporária evita dano a cada quadro.</td></tr>
+  <tr><td>Itens</td><td>Coletar pacote de dados e patch.</td><td>Pontos/vida atualizados; item desaparece.</td></tr>
+  <tr><td>Fim</td><td>Cair, perder vida e chegar ao final.</td><td>Tela correta; Enter reinicia a sessão.</td></tr>
+</table>
+
+<h2>8.2 Cronograma proposto</h2>
+<table>
+  <tr><th>Marco</th><th>Entregável</th><th>Situação</th></tr>
+  <tr><td>Concepção</td><td>Escopo, narrativa, controles e arquitetura</td><td>Concluído</td></tr>
+  <tr><td>Protótipo</td><td>Física, combate, inimigos, itens e fase</td><td>Concluído</td></tr>
+  <tr><td>Polimento</td><td>Animações adicionais, balanceamento e testes em Windows</td><td>Pendente</td></tr>
+  <tr><td>Entrega — 15/09/2026</td><td>PDF final e repositório publicado</td><td>Em preparação</td></tr>
+</table>
+
+<h2>8.3 Riscos</h2>
+<ul>
+  <li><b>Biblioteca ausente:</b> reduzido por <code>requirements.txt</code> e instruções de ambiente virtual.</li>
+  <li><b>Variação de FPS:</b> reduzida com delta de tempo e limite de passo.</li>
+  <li><b>Escopo excessivo:</b> mitigado mantendo uma fase e poucos tipos de entidade.</li>
+  <li><b>Problemas de áudio:</b> o jogo continua em silêncio quando o mixer não inicializa.</li>
+</ul>
+
+</section>
+</body>
+</html>

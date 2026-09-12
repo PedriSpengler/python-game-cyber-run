@@ -1,0 +1,2 @@
+"""Sistemas independentes do jogo."""
+
