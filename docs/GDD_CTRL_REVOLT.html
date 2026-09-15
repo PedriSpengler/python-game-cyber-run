@@ -96,7 +96,6 @@
   <tr><td>5</td><td>Arte, sprites, cenário, som e ferramentas</td></tr>
   <tr><td>6</td><td>Requisitos funcionais e não funcionais</td></tr>
   <tr><td>7</td><td>Arquitetura, módulos e dependências</td></tr>
-  <tr><td>8</td><td>Testes, cronograma, riscos e GitHub</td></tr>
 </table>
 
 <section class="page">
@@ -374,38 +373,6 @@
   <tr><td>Player</td><td>dependência</td><td>Physics e Dynamics</td><td>Usa fórmulas, movimento e colisão modularizados.</td></tr>
   <tr><td>Item</td><td>associação</td><td>Player</td><td>A coleta altera vida ou pontuação.</td></tr>
 </table>
-</section>
-
-<section class="page compact">
-<h1>8. Validação e entrega</h1>
-<h2>8.1 Estratégia de testes</h2>
-<table>
-  <tr><th>Teste</th><th>Procedimento</th><th>Resultado esperado</th></tr>
-  <tr><td>Física unitária</td><td>Executar <code>python -m unittest discover -s tests</code>.</td><td>Funções de aproximação, integração e limite aprovadas.</td></tr>
-  <tr><td>Movimentação</td><td>Correr contra paredes e saltar nas bordas.</td><td>Sem atravessar plataformas; coyote time perceptível.</td></tr>
-  <tr><td>Combate</td><td>Acertar cada sentinela três vezes.</td><td>Inimigo removido e 250 pontos adicionados.</td></tr>
-  <tr><td>Dano</td><td>Colidir ou receber múltiplos tiros.</td><td>Invulnerabilidade temporária evita dano a cada quadro.</td></tr>
-  <tr><td>Itens</td><td>Coletar pacote de dados e patch.</td><td>Pontos/vida atualizados; item desaparece.</td></tr>
-  <tr><td>Fim</td><td>Cair, perder vida e chegar ao final.</td><td>Tela correta; Enter reinicia a sessão.</td></tr>
-</table>
-
-<h2>8.2 Cronograma proposto</h2>
-<table>
-  <tr><th>Marco</th><th>Entregável</th><th>Situação</th></tr>
-  <tr><td>Concepção</td><td>Escopo, narrativa, controles e arquitetura</td><td>Concluído</td></tr>
-  <tr><td>Protótipo</td><td>Física, combate, inimigos, itens e fase</td><td>Concluído</td></tr>
-  <tr><td>Polimento</td><td>Animações adicionais, balanceamento e testes em Windows</td><td>Pendente</td></tr>
-  <tr><td>Entrega — 15/09/2026</td><td>PDF final e repositório publicado</td><td>Em preparação</td></tr>
-</table>
-
-<h2>8.3 Riscos</h2>
-<ul>
-  <li><b>Biblioteca ausente:</b> reduzido por <code>requirements.txt</code> e instruções de ambiente virtual.</li>
-  <li><b>Variação de FPS:</b> reduzida com delta de tempo e limite de passo.</li>
-  <li><b>Escopo excessivo:</b> mitigado mantendo uma fase e poucos tipos de entidade.</li>
-  <li><b>Problemas de áudio:</b> o jogo continua em silêncio quando o mixer não inicializa.</li>
-</ul>
-
 </section>
 </body>
 </html>
