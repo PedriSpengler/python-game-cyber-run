@@ -1,5 +1,7 @@
-from source.modules.engine import engine
+"""Ponto de entrada de CTRL//REVOLT."""
+
+from game.core.game import Game
+
 
 if __name__ == "__main__":
-    # Inicializa o TAC3 pelo Menu Principal centralizado no SceneManager (Padrão State)
-    engine.run()
+    Game().run()
