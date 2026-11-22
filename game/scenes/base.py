@@ -20,6 +20,9 @@ class Scene:
     def update(self, dt: float) -> None:
         del dt
 
+    def close(self) -> None:
+        pass
+
     def draw(self, surface: pygame.Surface) -> None:
         raise NotImplementedError
 

@@ -4,6 +4,7 @@ import pygame
 
 from game import config as cfg
 from game.systems.audio import Audio
+from game.systems.preferences import read_data, write_data
 
 
 class Game:
@@ -13,22 +14,35 @@ class Game:
         pygame.display.set_caption(cfg.TITLE)
         self.clock = pygame.time.Clock()
         self.audio = Audio()
+        volume = read_data("volume.json", 100)
+        self.volume = volume if type(volume) is int and volume in range(0, 101, 10) else 100
+        self.audio.set_volume(self.volume)
         self.running = True
         self.scene = None
         self.change_scene("menu")
 
     def change_scene(self, name: str, **payload) -> None:
-        if name == "menu":
+        if self.scene is not None:
+            self.scene.close()
+        if name in ("menu", "settings", "client"):
             from game.scenes.menu import MenuScene
-            self.scene = MenuScene(self)
+            self.scene = MenuScene(self, page=name, **payload)
         elif name == "gameplay":
             from game.scenes.gameplay import GameplayScene
-            self.scene = GameplayScene(self)
+            self.scene = GameplayScene(self, **payload)
+        elif name == "editor":
+            from game.scenes.editor import EditorScene
+            self.scene = EditorScene(self, **payload)
         elif name == "result":
             from game.scenes.result import ResultScene
             self.scene = ResultScene(self, **payload)
         else:
             raise ValueError(f"Cena desconhecida: {name}")
+
+    def set_volume(self, volume: int) -> None:
+        write_data("volume.json", volume)
+        self.volume = volume
+        self.audio.set_volume(volume)
 
     def run(self) -> None:
         while self.running:
@@ -37,6 +51,7 @@ class Game:
             self.scene.update(dt)
             self.scene.draw(self.screen)
             pygame.display.flip()
+        self.scene.close()
         pygame.quit()
 
     def handle_events(self) -> None:

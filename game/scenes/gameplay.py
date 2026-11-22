@@ -8,15 +8,23 @@ from game.entities.item import Item
 from game.entities.player import Player
 from game.scenes.base import Scene
 from game.systems.combat import resolve_combat
+from game.systems.lan import PORT
 from game.ui.hud import Hud
 from game.world.level import Level
 from game.world.stage_data import LEGACY_CODE_DUNGEON
 
 
 class GameplayScene(Scene):
-    def __init__(self, game) -> None:
+    def __init__(self, game, stage=LEGACY_CODE_DUNGEON, editor=None, lan=None) -> None:
         super().__init__(game)
-        self.level = Level(LEGACY_CODE_DUNGEON)
+        self.level = Level(stage)
+        self.editor = editor
+        self.lan = lan
+        self.lan_font = pygame.font.Font(None, 23) if lan else None
+        self.hud = Hud()
+        self.reset_run()
+
+    def reset_run(self):
         data = self.level.definition
         self.player = Player(*data.start)
         self.enemies = pygame.sprite.Group(*(
@@ -27,14 +35,32 @@ class GameplayScene(Scene):
             Item(spawn.x, spawn.y, spawn.kind) for spawn in data.items
         ))
         self.projectiles = pygame.sprite.Group()
-        self.hud = Hud()
         self.camera_x = 0.0
+
+    def close(self):
+        if self.lan is not None:
+            self.lan.close()
+
+    def leave(self):
+        if self.editor is not None:
+            self.game.change_scene("editor", stage=self.editor.stage, camera=self.editor.camera)
+        else:
+            self.game.change_scene("menu")
+
+    def finish(self, won):
+        if self.lan is not None:
+            self.reset_run()
+        else:
+            self.game.change_scene("result", won=won, score=self.player.score,
+                                   stage=self.level.definition, editor=self.editor)
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
             return
         if event.key == pygame.K_ESCAPE:
-            self.game.change_scene("menu")
+            self.leave()
+        elif self.lan is not None and not self.lan.connected:
+            return
         elif event.key in (pygame.K_w, pygame.K_SPACE):
             self.player.request_jump()
         elif event.key == pygame.K_k:
@@ -45,6 +71,14 @@ class GameplayScene(Scene):
             self.player.try_shield(self.game.audio)
 
     def update(self, dt: float) -> None:
+        if self.lan is not None:
+            position = [self.player.rect.x, self.player.rect.y, self.player.facing]
+            if not self.lan.tick(position):
+                self.game.change_scene("client", message="Servidor LAN sem resposta.",
+                                       address=self.lan.server[0])
+                return
+            if not self.lan.connected:
+                return
         keys = pygame.key.get_pressed()
         movement = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         aim = pygame.Vector2(
@@ -67,9 +101,9 @@ class GameplayScene(Scene):
         self.camera_x += (target - self.camera_x) * min(1, dt * 7)
 
         if self.player.life.empty or self.player.position.y > cfg.HEIGHT + 150:
-            self.game.change_scene("result", won=False, score=self.player.score)
+            self.finish(won=False)
         elif self.player.rect.centerx >= self.level.definition.exit_x:
-            self.game.change_scene("result", won=True, score=self.player.score)
+            self.finish(won=True)
 
     def draw(self, surface: pygame.Surface) -> None:
         self.level.draw(surface, self.camera_x)
@@ -82,6 +116,21 @@ class GameplayScene(Scene):
             if hasattr(sprite, "facing") and sprite.facing < 0:
                 image = pygame.transform.flip(image, True, False)
             surface.blit(image, position)
+        if self.lan is not None:
+            for x, y, facing in self.lan.players:
+                image = self.player.image
+                if facing < 0:
+                    image = pygame.transform.flip(image, True, False)
+                pos = (x - round(self.camera_x), y)
+                surface.blit(image, pos)
+                pygame.draw.line(surface, cfg.MAGENTA, (pos[0], y - 5), (pos[0] + image.get_width(), y - 5), 2)
+            status = f"LAN  •  {len(self.lan.players) + 1} jogador(es)"
+            if self.lan.host:
+                status = f"Servidor LAN (UDP {PORT})  •  {len(self.lan.players) + 1} jogador(es)"
+            elif not self.lan.connected:
+                status = f"Conectando a {self.lan.server[0]}…  Esc para cancelar"
+            text = self.lan_font.render(status, True, cfg.CYAN)
+            surface.blit(text, (cfg.WIDTH - text.get_width() - 12, cfg.HEIGHT - 23))
         self._draw_shield(surface)
         self.hud.draw(surface, self.player, self.level.definition)
 

@@ -21,6 +21,10 @@ class Audio:
         except pygame.error:
             pass
 
+    def set_volume(self, percent: int) -> None:
+        for sound in self.sounds.values():
+            sound.set_volume(percent / 100)
+
     def play(self, name: str) -> None:
         if self.enabled and name in self.sounds:
             self.sounds[name].play()
