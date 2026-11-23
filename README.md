@@ -31,6 +31,7 @@ python main.py
 | Dash | `K` |
 | Overclock | `L` |
 | Escudo antivírus | `I` |
+| Alternar tela cheia/janela | `F11` |
 | Reiniciar após fim | `Enter` |
 | Voltar ao menu na tela de resultado | `M` |
 | Voltar ou sair, conforme a tela | `Esc` |

@@ -10,7 +10,11 @@ from game.systems.preferences import read_data, write_data
 class Game:
     def __init__(self) -> None:
         pygame.init()
-        self.screen = pygame.display.set_mode((cfg.WIDTH, cfg.HEIGHT))
+        self.screen = pygame.display.set_mode(
+            (cfg.WIDTH, cfg.HEIGHT),
+            # SCALED amplia a imagem, preserva 16:9 e converte as coordenadas do mouse.
+            pygame.SCALED | pygame.RESIZABLE | pygame.FULLSCREEN,
+        )
         pygame.display.set_caption(cfg.TITLE)
         self.clock = pygame.time.Clock()
         self.audio = Audio()
@@ -64,5 +68,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
                 break
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+                pygame.display.toggle_fullscreen()
             else:
                 self.scene.handle_event(event)
