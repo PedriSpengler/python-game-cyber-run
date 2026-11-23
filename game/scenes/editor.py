@@ -15,27 +15,48 @@ TOOLS = ("Plataforma", "Início", "Saída", "Inimigo", "Item")
 
 
 def load_stage():
-    base = LEGACY_CODE_DUNGEON
+    base = replace(LEGACY_CODE_DUNGEON, name="FASE PERSONALIZADA")
     data = read_data(FILENAME)
     try:
-        return replace(
-            base,
-            name="FASE PERSONALIZADA",
-            start=tuple(data["start"]),
-            exit_x=data["exit_x"],
-            platforms=tuple(tuple(rect) for rect in data["platforms"]),
-            enemies=tuple(EnemySpawn(**spawn) for spawn in data["enemies"]),
-            items=tuple(ItemSpawn(**spawn) for spawn in data["items"]),
-        )
-    except (KeyError, TypeError):
-        return replace(base, name="FASE PERSONALIZADA")
+        start = tuple(data["start"])
+        exit_x = data["exit_x"]
+        platforms = tuple(tuple(rect) for rect in data["platforms"])
+        enemies = tuple(EnemySpawn(**spawn) for spawn in data["enemies"])
+        items = tuple(ItemSpawn(**spawn) for spawn in data["items"])
+        if not valid_point(*start, base.width):
+            return base
+        if not valid_point(exit_x, 0, base.width):
+            return base
+        for x, y, width, height in platforms:
+            if not valid_point(x, y, base.width):
+                return base
+            if type(width) is not int or type(height) is not int:
+                return base
+            if not 0 < width <= base.width - x or not 0 < height <= cfg.HEIGHT:
+                return base
+        for spawn in enemies:
+            if (not valid_point(spawn.x, spawn.y, base.width)
+                    or type(spawn.patrol_left) is not int or type(spawn.patrol_right) is not int
+                    or not 0 <= spawn.patrol_left <= spawn.x <= spawn.patrol_right <= base.width):
+                return base
+        for item in items:
+            if not valid_point(item.x, item.y, base.width) or item.kind not in ("data", "patch"):
+                return base
+        return replace(base, start=start, exit_x=exit_x, platforms=platforms,
+                       enemies=enemies, items=items)
+    except (KeyError, TypeError, ValueError):
+        return base
+
+
+def valid_point(x, y, width):
+    return type(x) is int and type(y) is int and 0 <= x < width and 0 <= y < cfg.HEIGHT
 
 
 class EditorScene(Scene):
-    def __init__(self, game, stage=None, camera=0):
+    def __init__(self, game):
         super().__init__(game)
-        self.stage = load_stage() if stage is None else stage
-        self.camera = camera
+        self.stage = load_stage()
+        self.camera = 0
         self.drag_start = None
         self.tool = 0
         self.history = []
@@ -58,9 +79,11 @@ class EditorScene(Scene):
             self.message = "Fase salva."
 
     def play(self):
+        self.drag_start = None
         self.game.change_scene("gameplay", stage=self.stage, editor=self)
 
     def back(self):
+        self.drag_start = None
         self.game.change_scene("menu")
 
     def change_stage(self, **changes):

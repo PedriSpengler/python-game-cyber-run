@@ -28,6 +28,11 @@ class LanSession:
         self.connected = self.host
 
     def close(self):
+        if self.host:
+            for address in self.peers:
+                self.send(["ctrl-revolt-server-closed-v1", None], address)
+        else:
+            self.send(["ctrl-revolt-leave-v1", None], self.server)
         self.socket.close()
 
     def send(self, packet, target):
@@ -64,6 +69,12 @@ class LanSession:
             if self.host and kind == "ctrl-revolt-position-v1" and self.valid_position(data):
                 if sender in self.peers or len(self.peers) < MAX_CLIENTS:
                     self.peers[sender] = (now, data)
+            elif self.host and kind == "ctrl-revolt-leave-v1":
+                self.peers.pop(sender, None)
+            elif not self.host and kind == "ctrl-revolt-server-closed-v1":
+                self.connected = False
+                self.players = []
+                return False
             elif not self.host and kind == "ctrl-revolt-players-v1":
                 if isinstance(data, list) and len(data) <= MAX_CLIENTS and all(map(self.valid_position, data)):
                     self.players = data

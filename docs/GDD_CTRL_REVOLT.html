@@ -39,6 +39,7 @@
   .compact table { font-size: 8.5pt; margin: 3px 0 6px; }
   .compact td, .compact th { padding: 4px 5px; }
   .compact h2 { margin: 8px 0 4px; }
+  .compact .formula { padding: 4px 9px; margin: 4px 0; }
   .compact li { margin-bottom: 1px; }
   .arch-flow { display: flex; align-items: stretch; justify-content: center; gap: 7px; margin: 9px 0 11px; }
   .arch-node { flex: 1; border: 2px solid #523f9d; border-radius: 7px; background: #f5f1ff; padding: 8px 9px; text-align: center; }
@@ -61,7 +62,7 @@
 <body>
 
 <section class="cover">
-  <div class="kicker">GAME DESIGN DOCUMENT • VERSÃO 1.0</div>
+  <div class="kicker">GAME DESIGN DOCUMENT • VERSÃO 1.1</div>
   <h1>CTRL//REVOLT</h1>
   <h2>Industrial Cyber-Run</h2>
   <p><span class="tag">RUN AND GUN</span><span class="tag">PLATAFORMA 2D</span><span class="tag">PIXEL ART</span></p>
@@ -69,7 +70,8 @@
     <b>Disciplina:</b> Tópicos Avançados III<br>
     <b>Plataforma:</b> PC Windows<br>
     <b>Tecnologia:</b> Python + Pygame<br>
-    <b>Data de entrega:</b> 15/09/2026<br><br>
+    <b>Data de entrega:</b> 15/09/2026<br>
+    <b>Última revisão:</b> 22/11/2026<br><br>
     <b>Instituição:</b> Universidade Federal da Grande Dourados<br>
     <b>Professor:</b> Vanderson Hafemann Fragal<br>
     <b>Alunos:</b> Pedro Joaquim Azevedo Spengler, Hudson Rolon e Lino Sanabria<br>
@@ -84,7 +86,7 @@
   <tr>
     <td>Pedro Joaquim Azevedo Spengler<br>Hudson Rolon<br>Lino Sanabria</td>
     <td>Desenvolvimento colaborativo</td>
-    <td>A equipe estruturou os módulos e implementou o loop principal, física, colisões, câmera e controles; definiu conceito, regras, balanceamento, paleta visual, sprites e cenário; criou efeitos sonoros, testes, requisitos e diagramas; e revisou o GDD.</td>
+    <td>A equipe estruturou os módulos e implementou o loop principal, física, colisões, câmera e controles; definiu conceito, regras, balanceamento, paleta visual, sprites e cenário; criou efeitos sonoros, testes, requisitos e diagramas. Também implementou o menu, as configurações de áudio, o editor e o modo LAN.</td>
   </tr>
 </table>
 
@@ -96,13 +98,14 @@
   <tr><td>5</td><td>Arte, sprites, cenário, som e ferramentas</td></tr>
   <tr><td>6</td><td>Requisitos funcionais e não funcionais</td></tr>
   <tr><td>7</td><td>Arquitetura, módulos e dependências</td></tr>
+  <tr><td>8</td><td>Editor de fases e multiplayer LAN</td></tr>
 </table>
 
 <section class="page">
 <h1>2. Conceito principal</h1>
 <h2>2.1 Visão</h2>
 <p><b>CTRL//REVOLT: Industrial Cyber-Run</b> é um jogo de ação e plataforma 2D em que código e máquinas ocupam o mesmo campo de batalha. Em 2089, a megacorporação OmniCore entrega o controle da cidade à inteligência artificial autoritária CENTINELA. O protagonista <b>Alex Byte</b>, engenheiro de software renegado, invade as camadas físicas do servidor central para libertar a população.</p>
-<p>A mecânica central é o <b>Overclock</b>: ao ativá-lo, Alex converte pacotes de dados recuperados em velocidade e cadência de tiro. O jogador alterna leitura do terreno, disparos em oito direções, dash e proteção temporária até obter acesso root ao núcleo da IA.</p>
+<p>A mecânica central é o <b>Overclock</b>: ao ativá-lo, Alex aumenta temporariamente a velocidade e a cadência de tiro. O jogador alterna leitura do terreno, disparos em oito direções, dash e proteção temporária até obter acesso root ao núcleo da IA.</p>
 
 <h2>2.2 Pilares de design</h2>
 <table>
@@ -123,10 +126,10 @@
 
 <h2>2.4 Condições e progressão do protótipo</h2>
 <ul>
-  <li><b>Vitória:</b> atravessar a masmorra de código legado e alcançar o terminal de acesso.</li>
+  <li><b>Vitória:</b> alcançar a coordenada horizontal da saída com a borda direita da personagem.</li>
   <li><b>Derrota:</b> perder os cinco pontos de integridade ou cair para fora da fase.</li>
   <li><b>Pontuação:</b> 100 pontos por pacote de dados e 250 por sentinela eliminada.</li>
-  <li><b>Escopo vertical:</b> uma fase, uma personagem, um tipo de inimigo, dois tipos de item, seis plataformas elevadas e cinco efeitos sonoros.</li>
+  <li><b>Escopo vertical:</b> uma fase padrão, uma fase personalizável, uma personagem, um tipo de inimigo, dois tipos de item e cinco efeitos sonoros. A fase padrão tem seis plataformas elevadas.</li>
 </ul>
 </section>
 
@@ -140,7 +143,7 @@
 <table>
   <tr><th>Item</th><th>Especificação</th></tr>
   <tr><td>Sistema operacional</td><td>Windows 10 ou Windows 11, 64 bits.</td></tr>
-  <tr><td>Entrada</td><td>Teclado; suporte a controle pode ser adicionado após o protótipo.</td></tr>
+  <tr><td>Entrada</td><td>Teclado na partida e teclado e mouse no menu e no editor.</td></tr>
   <tr><td>Tela</td><td>Janela 960 × 540, proporção 16:9.</td></tr>
   <tr><td>Desempenho-alvo</td><td>60 quadros por segundo, com atualização limitada e delta de tempo.</td></tr>
   <tr><td>Ambiente mínimo</td><td>Python 3.11+, Pygame-CE 2.5+, 2 GB de RAM e GPU com suporte 2D.</td></tr>
@@ -149,14 +152,15 @@
 
 <h2>3.3 Fluxo de telas</h2>
 <div class="diagram">
-  <span class="box">INÍCIO DO<br>APLICATIVO</span><span class="arrow">→</span>
-  <span class="box">FASE<br>JOGÁVEL</span><span class="arrow">→</span>
-  <span class="box">VITÓRIA OU<br>DERROTA</span><span class="arrow">→</span>
-  <span class="box">REINICIAR<br>OU SAIR</span>
+  <span class="box">MENU<br>PRINCIPAL</span><span class="arrow">→</span>
+  <span class="box">NOVO JOGO<br><small>fase padrão</small></span><span class="arrow">→</span>
+  <span class="box">RESULTADO<br><small>vitória ou derrota</small></span>
 </div>
+<p>O menu aceita clique ou navegação com ↑/↓ e Enter. Além de <b>Novo jogo</b>, oferece <b>Editor de fases</b>, <b>Hospedar partida LAN</b>, <b>Entrar em partida LAN</b> e <b>Configurações</b>. O volume dos efeitos varia de 0 a 100% em passos de 10% e é salvo localmente.</p>
+<p>No resultado, Enter repete a fase e M volta ao menu. Esc volta ao editor após um teste ou encerra o jogo após uma partida solo. Na LAN, vitória e derrota reiniciam a fase localmente e mantêm a sessão.</p>
 </section>
 
-<section class="page">
+<section class="page compact">
 <h1>4. Jogabilidade e física</h1>
 <h2>4.1 Controles</h2>
 <table>
@@ -169,7 +173,7 @@
   <tr><td>Overclock</td><td>L</td><td>Aumenta corrida e cadência por 3 s; recarga de 8 s.</td></tr>
   <tr><td>Escudo</td><td>I</td><td>Impede dano por 1,8 s; recarga de 7 s.</td></tr>
   <tr><td>Reiniciar</td><td>Enter</td><td>Disponível após vitória ou derrota.</td></tr>
-  <tr><td>Sair</td><td>Esc</td><td>Encerra o jogo de forma imediata.</td></tr>
+  <tr><td>Voltar ou sair</td><td>Esc</td><td>Na partida, volta ao menu ou ao editor. No menu principal, encerra o jogo.</td></tr>
 </table>
 
 <h2>4.2 Fórmulas de cálculo</h2>
@@ -182,7 +186,7 @@
 <p>Unidades: posição em pixels, velocidade em pixels/segundo e aceleração em pixels/segundo². O Δt é limitado a 1/30 s para evitar saltos de física quando o computador pausa ou perde quadros.</p>
 
 <h3>Colisões</h3>
-<p>A detecção usa caixas retangulares alinhadas aos eixos (<i>AABB</i>). O movimento é resolvido separadamente no eixo X e depois no eixo Y. Em cada interseção, o retângulo da entidade é reposicionado junto à borda mais próxima da plataforma e a velocidade daquele eixo recebe zero. Essa separação evita que a personagem atravesse quinas.</p>
+<p>A detecção usa caixas retangulares alinhadas aos eixos (<i>AABB</i>). O movimento é resolvido separadamente no eixo X e depois no eixo Y. Em cada interseção, o retângulo da entidade é reposicionado junto à borda mais próxima da plataforma e a velocidade daquele eixo recebe zero. A posição horizontal da personagem fica dentro dos limites da fase.</p>
 
 <h2>4.3 Habilidades da personagem</h2>
 <table>
@@ -196,7 +200,7 @@
 </table>
 </section>
 
-<section class="page">
+<section class="page compact">
 <h1>5. Direção audiovisual</h1>
 <h2>5.1 Arte visual</h2>
 <p>O estilo escolhido é <b>pixel art</b> com escala inteira de 4×. A paleta contrasta fundo azul-marinho, estruturas de aço, ciano da protagonista, magenta de energia e vermelho dos inimigos. Formas simples e contornos claros mantêm a leitura durante movimento rápido.</p>
@@ -212,10 +216,14 @@
   <tr><td>Sentinela OmniCore</td><td>Robô vermelho/roxo, 40 × 44 px.</td><td>Sprite procedural; patrulha e disparo.</td></tr>
   <tr><td>Pacote de dados</td><td>Chip amarelo/branco, 24 × 20 px.</td><td>Coletável de 100 pontos.</td></tr>
   <tr><td>Patch de integridade</td><td>Cruz verde, 24 × 20 px.</td><td>Recupera um ponto de vida.</td></tr>
-  <tr><td>Projéteis</td><td>Traços amarelos ou vermelhos, 16 × 6 px.</td><td>Jogador/inimigo com velocidades diferentes.</td></tr>
+  <tr><td>Projéteis</td><td>Traços amarelos ou vermelhos, 16 × 6 px.</td><td>Sprites centralizados no ponto de disparo e orientados conforme a trajetória. Os tiros do jogador e do inimigo têm velocidades diferentes.</td></tr>
   <tr><td>Legacy Code Dungeon</td><td>Servidores, plataformas industriais, cabos, núcleo e luzes intermitentes.</td><td>Cenário inicial com parallax e largura de 2.500 px.</td></tr>
 </table>
 
+</section>
+
+<section class="page compact">
+<h1>5. Direção audiovisual</h1>
 <h2>5.3 Áudio</h2>
 <table>
   <tr><th>Arquivo</th><th>Evento</th><th>Caráter</th></tr>
@@ -230,7 +238,7 @@
 <h2>5.4 Ferramentas de suporte</h2>
 <table>
   <tr><th>Área</th><th>Ferramentas</th><th>Uso proposto</th></tr>
-  <tr><td>Mapa</td><td>Tiled</td><td>Criação futura de tilemaps, colisões e pontos de surgimento.</td></tr>
+  <tr><td>Mapa</td><td>Tiled</td><td>Ferramenta prevista para tilemaps. O editor integrado já permite posicionar plataformas e pontos de surgimento.</td></tr>
   <tr><td>Vetores/UI</td><td>Inkscape</td><td>Logotipo, ícones e composição de interface.</td></tr>
   <tr><td>Áudio</td><td>Audacity e BeepBox</td><td>Limpeza de efeitos e composição da trilha eletrônica.</td></tr>
   <tr><td>Programação</td><td>Python, Pygame-CE, VS Code</td><td>Implementação, depuração e execução.</td></tr>
@@ -254,9 +262,9 @@
   <tr><td>RF09</td><td>O HUD deve exibir vida, pontos e controles.</td><td>Dados são atualizados durante a partida.</td></tr>
   <tr><td>RF10</td><td>O sistema deve determinar vitória e derrota.</td><td>Exibe mensagem correspondente e permite reiniciar com Enter.</td></tr>
   <tr><td>RF11</td><td>O jogo deve reproduzir efeitos sonoros.</td><td>Pulo, tiro, dash, impacto e coleta acionam seus sons.</td></tr>
-  <tr><td>RF12</td><td>O sistema deve permitir encerrar com Esc.</td><td>A janela fecha sem erro ou processo residual.</td></tr>
+  <tr><td>RF12</td><td>O sistema deve fechar a janela com Esc no menu principal.</td><td>A janela fecha sem erro ou processo residual.</td></tr>
   <tr><td>RF13</td><td>O sistema deve oferecer Overclock e escudo.</td><td>Habilidades possuem duração, efeito e recarga independentes.</td></tr>
-  <tr><td>RF14</td><td>O sistema deve separar menu, partida e resultado.</td><td>Cada estado é implementado por uma cena substituível.</td></tr>
+  <tr><td>RF14</td><td>O sistema deve separar menu, editor, partida e resultado.</td><td>Cada estado é implementado por uma cena substituível.</td></tr>
 </table>
 
 <h2>6.2 Requisitos não funcionais</h2>
@@ -268,7 +276,7 @@
   <tr><td>RNF04</td><td>Confiabilidade</td><td>Delta limitado; áudio falha de modo seguro se dispositivo indisponível.</td></tr>
   <tr><td>RNF05</td><td>Usabilidade</td><td>Comandos visíveis permanentemente no HUD.</td></tr>
   <tr><td>RNF06</td><td>Legibilidade visual</td><td>Contraste de cor distingue jogador, inimigo, tiro e item.</td></tr>
-  <tr><td>RNF07</td><td>Testabilidade</td><td>Funções matemáticas puras cobertas por testes unitários.</td></tr>
+  <tr><td>RNF07</td><td>Testabilidade</td><td>Testes unitários de física e testes de regressão de jogabilidade, editor e LAN.</td></tr>
   <tr><td>RNF08</td><td>Licenciamento</td><td>Código e ativos próprios; dependências declaradas.</td></tr>
 </table>
 </section>
@@ -288,7 +296,8 @@
   <div class="arch-card">
     <h3>Cenas</h3>
     <ul>
-      <li><code>menu.py</code> — abertura e comandos.</li>
+      <li><code>menu.py</code> — navegação, volume e conexão LAN.</li>
+      <li><code>editor.py</code> — edição, salvamento e teste de fase.</li>
       <li><code>gameplay.py</code> — coordenação da partida.</li>
       <li><code>result.py</code> — vitória e derrota.</li>
     </ul>
@@ -305,6 +314,8 @@
     <ul>
       <li>Física, movimento e colisões.</li>
       <li>Combate, ativos visuais e áudio.</li>
+      <li><code>preferences.py</code> — persistência local em JSON.</li>
+      <li><code>lan.py</code> — sessão UDP e posições remotas.</li>
     </ul>
   </div>
   <div class="arch-card">
@@ -326,7 +337,7 @@
 <table>
   <tr><th>Módulo</th><th>Entrada</th><th>Saída</th></tr>
   <tr><td>Game</td><td>Eventos, teclado, tempo</td><td>Atualização e quadro renderizado</td></tr>
-  <tr><td>Scenes</td><td>Eventos e contexto do jogo</td><td>Menu, partida ou resultado</td></tr>
+  <tr><td>Scenes</td><td>Eventos e contexto do jogo</td><td>Menu, editor, partida ou resultado</td></tr>
   <tr><td>Player</td><td>Movimento, comandos, plataformas</td><td>Estado físico e novos projéteis</td></tr>
   <tr><td>Enemy</td><td>Tempo e posição da personagem</td><td>Patrulha e projétil hostil</td></tr>
   <tr><td>Level</td><td>Câmera</td><td>Plataformas e cenário desenhado</td></tr>
@@ -365,13 +376,43 @@
 <table>
   <tr><th>Origem</th><th>Relação</th><th>Destino</th><th>Motivo</th></tr>
   <tr><td>Player, Enemy, Item, Projectile</td><td>generalização</td><td>Entity</td><td>Compartilham posição, velocidade, imagem e retângulo.</td></tr>
-  <tr><td>Game</td><td>composição 1:1</td><td>Scene e Audio</td><td>Gerencia o ciclo da aplicação.</td></tr>
+  <tr><td>Game</td><td>composição 1:1</td><td>Scene e Audio</td><td>Gerencia a cena ativa e o áudio. Mantém uma instância do editor após o primeiro acesso.</td></tr>
+  <tr><td>GameplayScene</td><td>composição 1:0..1</td><td>LanSession</td><td>Gerencia a sessão UDP durante a partida LAN e fecha o socket ao sair.</td></tr>
   <tr><td>GameplayScene</td><td>composição 1:1</td><td>Player, Level e Hud</td><td>Existem durante uma partida.</td></tr>
   <tr><td>GameplayScene</td><td>agregação 1:N</td><td>Enemy, Item, Projectile</td><td>Coleções mudam durante a partida.</td></tr>
   <tr><td>Player e Enemy</td><td>composição 1:1</td><td>Health</td><td>Compartilham as regras de vida sem duplicação.</td></tr>
   <tr><td>Player e Enemy</td><td>criação</td><td>Projectile</td><td>Ambos disparam com regras distintas.</td></tr>
   <tr><td>Player</td><td>dependência</td><td>Physics e Dynamics</td><td>Usa fórmulas, movimento e colisão modularizados.</td></tr>
   <tr><td>Item</td><td>associação</td><td>Player</td><td>A coleta altera vida ou pontuação.</td></tr>
+</table>
+</section>
+<section class="page compact">
+<h1>8. Editor de fases e multiplayer LAN</h1>
+<h2>8.1 Editor de fases</h2>
+<p>O editor parte de uma cópia da Legacy Code Dungeon e permite editar uma fase personalizada. Use a barra superior ou as teclas 1 a 5 para selecionar Plataforma, Início, Saída, Inimigo ou Item. Arraste com o botão esquerdo para desenhar uma plataforma ou clique para posicionar os demais elementos. A ferramenta Item adiciona pacotes de dados.</p>
+<table>
+  <tr><th>Comando</th><th>Resultado</th></tr>
+  <tr><td>← / →</td><td>Percorre a fase horizontalmente.</td></tr>
+  <tr><td>Botão direito</td><td>Remove um item, inimigo ou plataforma sob o cursor.</td></tr>
+  <tr><td>Ctrl+Z</td><td>Desfaz a última edição.</td></tr>
+  <tr><td>Salvar / Ctrl+S</td><td>Grava a fase em <code>custom-stage.json</code>.</td></tr>
+  <tr><td>Testar / Enter</td><td>Joga a fase em edição, inclusive com alterações ainda sem salvar.</td></tr>
+  <tr><td>Menu / Esc</td><td>Retorna ao menu e mantém a edição em memória durante a execução.</td></tr>
+</table>
+<p>Ao voltar de um teste, a fase em edição, a câmera, a ferramenta selecionada e o histórico de desfazer são preservados. Na abertura do editor, o jogo valida os dados do arquivo e usa a fase base se ele estiver ausente ou inválido. A fase e o volume são gravados no diretório de dados do usuário.</p>
+
+<h2>8.2 Multiplayer LAN</h2>
+<p>Em dispositivos na mesma rede local, uma pessoa escolhe <b>Hospedar partida LAN</b>. As demais escolhem <b>Entrar em partida LAN</b> e informam o IPv4 do anfitrião. A sessão usa UDP na porta 27830 e comporta até oito jogadores, contando o anfitrião.</p>
+<p>O anfitrião encaminha a posição e a direção dos avatares, identificados por uma marca magenta. Cada dispositivo simula localmente inimigos, projéteis, itens, vida, pontuação e resultado. O HUD indica o estado da conexão e a quantidade de jogadores.</p>
+<p>Ao sair, a sessão avisa os participantes. O cliente volta à tela de conexão se o anfitrião encerrar a sessão ou se a comunicação ficar quatro segundos sem resposta.</p>
+
+<h2>8.3 Critérios de aceitação</h2>
+<table>
+  <tr><th>ID</th><th>Requisito</th><th>Critério de aceitação</th></tr>
+  <tr><td>RF15</td><td>Navegar pelo menu e configurar o volume.</td><td>Selecionar opções por teclado ou mouse e recuperar o volume após reabrir o jogo.</td></tr>
+  <tr><td>RF16</td><td>Criar, editar e salvar uma fase.</td><td>Posicionar elementos, desfazer uma edição e recarregar a fase salva.</td></tr>
+  <tr><td>RF17</td><td>Testar a fase diretamente do editor.</td><td>Abrir a fase em edição e retornar com câmera e histórico preservados.</td></tr>
+  <tr><td>RF18</td><td>Hospedar ou entrar em uma partida LAN.</td><td>Exibir avatares remotos e atualizar o estado da sessão quando os participantes saem.</td></tr>
 </table>
 </section>
 </body>

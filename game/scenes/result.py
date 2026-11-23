@@ -27,7 +27,7 @@ class ResultScene(Scene):
                 if self.editor is None:
                     self.game.running = False
                 else:
-                    self.game.change_scene("editor", stage=self.stage, camera=self.editor.camera)
+                    self.game.change_scene("editor")
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill(cfg.BG)

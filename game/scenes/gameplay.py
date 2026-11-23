@@ -43,7 +43,7 @@ class GameplayScene(Scene):
 
     def leave(self):
         if self.editor is not None:
-            self.game.change_scene("editor", stage=self.editor.stage, camera=self.editor.camera)
+            self.game.change_scene("editor")
         else:
             self.game.change_scene("menu")
 
@@ -74,7 +74,7 @@ class GameplayScene(Scene):
         if self.lan is not None:
             position = [self.player.rect.x, self.player.rect.y, self.player.facing]
             if not self.lan.tick(position):
-                self.game.change_scene("client", message="Servidor LAN sem resposta.",
+                self.game.change_scene("client", message="Conexão LAN encerrada ou sem resposta.",
                                        address=self.lan.server[0])
                 return
             if not self.lan.connected:
@@ -89,6 +89,12 @@ class GameplayScene(Scene):
             self.player.try_shoot(self.projectiles, self.game.audio, aim)
 
         self.player.update(dt, movement, self.level.platforms, self.game.audio)
+        right_bound = self.level.width - self.player.rect.width
+        bounded_x = max(0, min(self.player.position.x, right_bound))
+        if bounded_x != self.player.position.x:
+            self.player.position.x = bounded_x
+            self.player.velocity.x = 0
+            self.player.sync_rect()
         self.level.update(dt)
         for enemy in list(self.enemies):
             enemy.update(dt, self.player, self.projectiles)
@@ -102,7 +108,7 @@ class GameplayScene(Scene):
 
         if self.player.life.empty or self.player.position.y > cfg.HEIGHT + 150:
             self.finish(won=False)
-        elif self.player.rect.centerx >= self.level.definition.exit_x:
+        elif self.player.rect.right >= self.level.definition.exit_x:
             self.finish(won=True)
 
     def draw(self, surface: pygame.Surface) -> None:

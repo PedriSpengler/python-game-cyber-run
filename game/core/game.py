@@ -19,6 +19,7 @@ class Game:
         self.audio.set_volume(self.volume)
         self.running = True
         self.scene = None
+        self.editor = None
         self.change_scene("menu")
 
     def change_scene(self, name: str, **payload) -> None:
@@ -32,7 +33,9 @@ class Game:
             self.scene = GameplayScene(self, **payload)
         elif name == "editor":
             from game.scenes.editor import EditorScene
-            self.scene = EditorScene(self, **payload)
+            if self.editor is None:
+                self.editor = EditorScene(self)
+            self.scene = self.editor
         elif name == "result":
             from game.scenes.result import ResultScene
             self.scene = ResultScene(self, **payload)
@@ -48,6 +51,8 @@ class Game:
         while self.running:
             dt = min(self.clock.tick(cfg.FPS) / 1000.0, 1 / 30)
             self.handle_events()
+            if not self.running:
+                break
             self.scene.update(dt)
             self.scene.draw(self.screen)
             pygame.display.flip()
@@ -58,5 +63,6 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+                break
             else:
                 self.scene.handle_event(event)
